@@ -7,9 +7,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: subosito/flutter-action@v2
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.0'
+      - name: Create New Flutter Project
+        run: |
+          # สร้างโปรเจกต์ใหม่ในโฟลเดอร์ชั่วคราวแล้วย้ายไฟล์มา
+          flutter create temp_app
+          mv temp_app/android .
+          mv temp_app/ios .
+          mv temp_app/web .
+          mv temp_app/linux .
+          mv temp_app/macos .
+          mv temp_app/windows .
+          mv temp_app/.gitignore .
+          rm -rf temp_app
       - run: flutter pub get
       - run: flutter build apk --release
       - uses: actions/upload-artifact@v4
