@@ -9,13 +9,13 @@ jobs:
         with:
           flutter-version: '3.19.0'
       - run: |
-          flutter create temp_app
-          mv temp_app/android .
-          mv temp_app/ios .
+          # ติดตั้งโครงสร้าง Android ใหม่โดยอัตโนมัติบน Cloud
+          flutter create .
+          # ตั้งค่าเวอร์ชัน Android
           sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 26/g' android/app/build.gradle
           sed -i 's/compileSdkVersion flutter.compileSdkVersion/compileSdkVersion 34/g' android/app/build.gradle
           sed -i 's/targetSdkVersion flutter.targetSdkVersion/targetSdkVersion 34/g' android/app/build.gradle
-          rm -rf temp_app
+          # Build
           flutter pub get
           flutter build apk --split-per-abi --release
       - uses: actions/upload-artifact@v4
