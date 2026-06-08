@@ -5,21 +5,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      
+      # 1. ตั้งค่า Java 17 ให้ตรงกับระบบของ Flutter (แก้ปัญหา Gradle พัง)
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          
+      # 2. เรียกใช้งาน Flutter 3.19
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.0'
+          
+      # 3. ขั้นตอนการสร้างและประกอบแอป
       - run: |
-          # บังคับกำหนดชื่อโปรเจกต์ด้วย --project-name เพื่อแก้ปัญหาขีดกลาง (-)
+          # สร้างโครงสร้างระบบใหม่ทั้งหมดโดยใช้ชื่อที่ถูกต้อง
           flutter create --project-name=my_vpn_app .
           
-          # ตั้งค่าเวอร์ชัน Android
-          sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 26/g' android/app/build.gradle
-          sed -i 's/compileSdkVersion flutter.compileSdkVersion/compileSdkVersion 34/g' android/app/build.gradle
-          sed -i 's/targetSdkVersion flutter.targetSdkVersion/targetSdkVersion 34/g' android/app/build.gradle
-          
-          # Build
+          # ล้างไฟล์ขยะตกค้างและดึงระบบกลับมาให้สะอาด
+          flutter clean
           flutter pub get
+          
+          # เริ่มประกอบไฟล์ติดตั้งแบบแยกชิปประมวลผล
           flutter build apk --split-per-abi --release
+          
+      # 4. ส่งไฟล์เข้าสู่หน้าดาวน์โหลด Artifacts
       - uses: actions/upload-artifact@v4
         with:
           name: app-release
