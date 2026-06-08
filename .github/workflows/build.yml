@@ -13,7 +13,6 @@ jobs:
           flutter-version: '3.19.0'
       - name: Create New Flutter Project
         run: |
-          # สร้างโปรเจกต์ใหม่ในโฟลเดอร์ชั่วคราวแล้วย้ายไฟล์มา
           flutter create temp_app
           mv temp_app/android .
           mv temp_app/ios .
@@ -22,6 +21,9 @@ jobs:
           mv temp_app/macos .
           mv temp_app/windows .
           mv temp_app/.gitignore .
+          # --- คำสั่งแก้ minSdkVersion ให้เป็น 24 ที่นี่ ---
+          sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 24/g' android/app/build.gradle
+          # ---------------------------------------------
           rm -rf temp_app
       - run: flutter pub get
       - run: flutter build apk --release
