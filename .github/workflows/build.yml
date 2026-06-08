@@ -1,33 +1,22 @@
 name: Build Flutter App
-on:
-  push:
-    branches: [ main ]
+on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.0'
-      - name: Create New Flutter Project
-        run: |
+      - run: |
           flutter create temp_app
           mv temp_app/android .
           mv temp_app/ios .
-          mv temp_app/web .
-          mv temp_app/linux .
-          mv temp_app/macos .
-          mv temp_app/windows .
-          mv temp_app/.gitignore .
-          # --- คำสั่งแก้ minSdkVersion ให้เป็น 24 ที่นี่ ---
-          sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 24/g' android/app/build.gradle
-          # ---------------------------------------------
+          sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 28/g' android/app/build.gradle
           rm -rf temp_app
-      - run: flutter pub get
-      - run: flutter build apk --release
+          flutter pub get
+          flutter build apk --split-per-abi --release
       - uses: actions/upload-artifact@v4
         with:
           name: app-release
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: build/app/outputs/flutter-apk/
